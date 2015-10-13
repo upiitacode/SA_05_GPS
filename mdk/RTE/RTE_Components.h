@@ -3,7 +3,7 @@
  * Auto generated Run-Time-Environment Component Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'SPL_04_UART_STM32F3' 
+ * Project: 'MA_02_Clock' 
  * Target:  'Target 1' 
  */
 
