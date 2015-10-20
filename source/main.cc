@@ -2,23 +2,13 @@
 #include "stm32f30x.h"
 #include "timer_15.h"
 #include "Clock.h"
-
-void led_init(void);
-
-class TimedClock : public EventListener, public Clock{
-	public:
-		TimedClock(Time& time){
-			this->setTime(time);
-		}
-		virtual void onEvent(void){
-			this->tick();
-		}
-};
+#include "timedclock.h"
 
 void delay_ms(int delay_time){
 	for(int i = 0; i < delay_time; i++){
 	}
 }
+
 int main(){
 	//System configuration
 	Time myTime(15,4,5,0);

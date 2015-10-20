@@ -1,10 +1,7 @@
 #ifndef _TIMER_15_H
 #define _TIMER_15_H
 
-class EventListener{
-	public:
-		virtual void onEvent(void) = 0;
-};
+#include "eventListener.h"
 
 class Timer15{
 	private:
