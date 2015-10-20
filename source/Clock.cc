@@ -10,7 +10,7 @@ int Clock::getTimeAsInt(void){
 
 void Clock::tick(void){
 	int tempTime = this->timeAsInt;
-	tempTime++;
+	tempTime+=1;
 	tempTime%=(24*60*60*1000);
 	this->timeAsInt = tempTime;
 }
