@@ -5,17 +5,13 @@
 
 void led_init(void);
 
-class MainApp : public EventListener{
-	private:
-		Clock* clock;
+class TimedClock : public EventListener, public Clock{
 	public:
-		MainApp(Clock& clock){
-			led_init();
-			this->clock = &clock;
+		TimedClock(Time& time){
+			this->setTime(time);
 		}
 		virtual void onEvent(void){
-			GPIOB->ODR = (~GPIOB->ODR) & (0x01 << 13);
-			clock->tick();
+			this->tick();
 		}
 };
 
@@ -25,11 +21,9 @@ void delay_ms(int delay_time){
 }
 int main(){
 	//System configuration
-	Clock clock;
 	Time myTime(15,4,5,0);
-	clock.setTime(myTime);
-	MainApp app(clock);
-	Timer15 timer15(1000, app);
+	TimedClock clock(myTime);
+	Timer15 timer15(1000, clock);
 	Serial_stream* serial = new SerialUSART2(9600);
 
 	//User application
@@ -37,16 +31,6 @@ int main(){
 	while(1){
 		clock.getTime(myTime);
 		serial->printf("Hora = %02d:%02d:%02d\n", myTime.hours, myTime.minutes, myTime.seconds);
-		delay_ms(0xFFFF);
+		delay_ms(0x8FFFF);
 	}
-}
-
-void led_init(void){
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB,ENABLE);
-	GPIO_InitTypeDef myGPIO;
-	GPIO_StructInit(&myGPIO);
-	myGPIO.GPIO_Pin=GPIO_Pin_13;
-	myGPIO.GPIO_Mode=GPIO_Mode_OUT;
-	GPIO_Init(GPIOB,&myGPIO);
-	GPIO_ResetBits(GPIOB,GPIO_Pin_13);
 }
