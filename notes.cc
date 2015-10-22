@@ -62,7 +62,7 @@ Class EventListener{
 
 class DisplayDriver : public EventListener{
 	public:
-		PIOPin* PinCLK;
+		GPIOPin* PinCLK;
 		GPIOPin* PinDATA;
 		GPIOPin* PinLOAD;
 		uint16_t displayData[2][20];
