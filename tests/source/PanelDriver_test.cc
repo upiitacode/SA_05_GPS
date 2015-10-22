@@ -1,4 +1,5 @@
 #include "gmock/gmock.h"
+#include "PanelDriver.h"
 #include <vector>
 
 using ::testing::Eq;
@@ -7,68 +8,14 @@ using ::testing::Each;
 using ::testing::ElementsAreArray;
 using ::std::vector;
 
-class DataShifter{
-	public:
-		virtual ~DataShifter(){};
-		virtual void shiftColumnData(int column,
-				uint16_t row0Data,
-				uint16_t row1Data) = 0;
-};
-
 class MockDataShifter : public DataShifter{
 	public:
 		MOCK_METHOD3(shiftColumnData, void(int column,
 				uint16_t row0Data,
 				uint16_t row1Data));
+
 };
 
-class PanelDriver{
-	public:
-		static const int ROWS = 2;
-		static const int COLUMNS = 8;
-
-	private:
-		DataShifter* dataShifter;
-		uint16_t data[ROWS][COLUMNS];
-		int currentColumn;
-
-		void clearAllData(void);
-
-	public:
-		PanelDriver(DataShifter& dataShifter);
-		uint16_t getData(int row, int column);
-		void setData(int row, int column, uint16_t data);
-		void tick(void);
-};
-
-
-PanelDriver::PanelDriver(DataShifter& dataShifter){
-	this->dataShifter = & dataShifter;
-	dataShifter.shiftColumnData(0,0,0);
-	clearAllData();
-	currentColumn = 0;
-}
-
-uint16_t PanelDriver::getData(int row, int column){
-	return data[row][column];
-}
-
-void PanelDriver::setData(int row, int column, uint16_t data){
-	this->data[row][column] = data;
-}
-
-void PanelDriver::tick(void){
-	dataShifter->shiftColumnData(currentColumn,data[0][currentColumn],data[1][currentColumn]);
-	currentColumn = (currentColumn + 1) % COLUMNS;
-}
-
-void PanelDriver::clearAllData(void){
-	for(int i = 0; i < ROWS; i++){
-		for(int j = 0; j < COLUMNS; j++){
-			data[i][j] = 0;
-		}
-	}
-}
 
 void copyAllData(PanelDriver& panelDriver, vector<uint16_t>& dataRow0, vector<uint16_t>& dataRow1){
 	for(int j = 0; j < PanelDriver::COLUMNS; j++){
