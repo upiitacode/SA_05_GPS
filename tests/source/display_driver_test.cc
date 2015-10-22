@@ -59,7 +59,7 @@ void DisplayDriver::setData(int row, int column, uint16_t data){
 
 void DisplayDriver::tick(void){
 	dataShifter->shiftColumnData(currentColumn,data[0][currentColumn],data[1][currentColumn]);
-	currentColumn++;
+	currentColumn = (currentColumn + 1) % COLUMNS;
 }
 
 void DisplayDriver::clearAllData(void){
@@ -140,6 +140,24 @@ TEST(DisplayDriverTest, AfterFourTicksThe4thColumnIsShifted){
 	displayDriver.tick();
 	displayDriver.tick();
 	displayDriver.tick();
+
+	EXPECT_CALL(dataShifter, shiftColumnData(column,data0,data1));
+	displayDriver.tick();
+}
+
+TEST(DisplayDriverTest, AfterLastTickTheFirstColumnIsShifted){
+	NiceMock<MockDataShifter> dataShifter;
+	DisplayDriver displayDriver(dataShifter);
+
+	const uint16_t data0 = 546;
+	const uint16_t data1 = 856;
+	const uint16_t column = 0;
+
+	displayDriver.setData(0, column, data0);
+	displayDriver.setData(1, column, data1);
+	for(int i = 0; i < (DisplayDriver::COLUMNS); i++){
+		displayDriver.tick();
+	}
 
 	EXPECT_CALL(dataShifter, shiftColumnData(column,data0,data1));
 	displayDriver.tick();
