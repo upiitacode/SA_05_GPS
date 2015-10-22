@@ -22,7 +22,7 @@ class MockDataShifter : public DataShifter{
 				uint16_t row1Data));
 };
 
-class DisplayDriver{
+class PanelDriver{
 	public:
 		static const int ROWS = 2;
 		static const int COLUMNS = 8;
@@ -35,34 +35,34 @@ class DisplayDriver{
 		void clearAllData(void);
 
 	public:
-		DisplayDriver(DataShifter& dataShifter);
+		PanelDriver(DataShifter& dataShifter);
 		uint16_t getData(int row, int column);
 		void setData(int row, int column, uint16_t data);
 		void tick(void);
 };
 
 
-DisplayDriver::DisplayDriver(DataShifter& dataShifter){
+PanelDriver::PanelDriver(DataShifter& dataShifter){
 	this->dataShifter = & dataShifter;
 	dataShifter.shiftColumnData(0,0,0);
 	clearAllData();
 	currentColumn = 0;
 }
 
-uint16_t DisplayDriver::getData(int row, int column){
+uint16_t PanelDriver::getData(int row, int column){
 	return data[row][column];
 }
 
-void DisplayDriver::setData(int row, int column, uint16_t data){
+void PanelDriver::setData(int row, int column, uint16_t data){
 	this->data[row][column] = data;
 }
 
-void DisplayDriver::tick(void){
+void PanelDriver::tick(void){
 	dataShifter->shiftColumnData(currentColumn,data[0][currentColumn],data[1][currentColumn]);
 	currentColumn = (currentColumn + 1) % COLUMNS;
 }
 
-void DisplayDriver::clearAllData(void){
+void PanelDriver::clearAllData(void){
 	for(int i = 0; i < ROWS; i++){
 		for(int j = 0; j < COLUMNS; j++){
 			data[i][j] = 0;
@@ -70,35 +70,35 @@ void DisplayDriver::clearAllData(void){
 	}
 }
 
-void copyAllData(DisplayDriver& displayDriver, vector<uint16_t>& dataRow0, vector<uint16_t>& dataRow1){
-	for(int j = 0; j < DisplayDriver::COLUMNS; j++){
-		dataRow0[j] = displayDriver.getData(0,j);
-		dataRow1[j] = displayDriver.getData(1,j);
+void copyAllData(PanelDriver& panelDriver, vector<uint16_t>& dataRow0, vector<uint16_t>& dataRow1){
+	for(int j = 0; j < PanelDriver::COLUMNS; j++){
+		dataRow0[j] = panelDriver.getData(0,j);
+		dataRow1[j] = panelDriver.getData(1,j);
 	}
 }
 
-TEST(DisplayDriverTest, ThatScreenIsBlankedOnCreation){
+TEST(PanelDriver, ThatScreenIsBlankedOnCreation){
 	MockDataShifter dataShifter;
 	EXPECT_CALL(dataShifter,shiftColumnData(0,0,0));
-	DisplayDriver displayDriver(dataShifter);
+	PanelDriver panelDriver(dataShifter);
 }
 
-TEST(DisplayDriverTest, DataBufferIsClearedOnCreation){
+TEST(PanelDriver, DataBufferIsClearedOnCreation){
 	NiceMock<MockDataShifter> dataShifter;
-	DisplayDriver displayDriver(dataShifter);
-	vector<uint16_t> dataRow0(DisplayDriver::COLUMNS,-1);
-	vector<uint16_t> dataRow1(DisplayDriver::COLUMNS,-1);
+	PanelDriver panelDriver(dataShifter);
+	vector<uint16_t> dataRow0(PanelDriver::COLUMNS,-1);
+	vector<uint16_t> dataRow1(PanelDriver::COLUMNS,-1);
 
-	copyAllData(displayDriver, dataRow0, dataRow1);
+	copyAllData(panelDriver, dataRow0, dataRow1);
 	EXPECT_THAT(dataRow0,Each(0));
 	EXPECT_THAT(dataRow1,Each(0));
 }
 
-TEST(DisplayDriverTest, DataCanBeSavedIntoBuffer){
+TEST(PanelDriver, DataCanBeSavedIntoBuffer){
 	NiceMock<MockDataShifter> dataShifter;
-	DisplayDriver displayDriver(dataShifter);
-	vector<uint16_t> dataRow0(DisplayDriver::COLUMNS,-1);
-	vector<uint16_t> dataRow1(DisplayDriver::COLUMNS,-1);
+	PanelDriver panelDriver(dataShifter);
+	vector<uint16_t> dataRow0(PanelDriver::COLUMNS,-1);
+	vector<uint16_t> dataRow1(PanelDriver::COLUMNS,-1);
 
 	const int row0 = 0;
 	const int row1 = 1;
@@ -107,58 +107,58 @@ TEST(DisplayDriverTest, DataCanBeSavedIntoBuffer){
 	const uint16_t data0 = 546;
 	const uint16_t data1 = 34;
 
-	displayDriver.setData(row0,column0,data0);
-	displayDriver.setData(row1,column1,data1);
+	panelDriver.setData(row0,column0,data0);
+	panelDriver.setData(row1,column1,data1);
 
-	EXPECT_THAT(displayDriver.getData(row0,column0), Eq(data0));
-	EXPECT_THAT(displayDriver.getData(row1,column1), Eq(data1));
+	EXPECT_THAT(panelDriver.getData(row0,column0), Eq(data0));
+	EXPECT_THAT(panelDriver.getData(row1,column1), Eq(data1));
 }
 
-TEST(DisplayDriverTest, WhenFirstTickIsGeneratedTheFirstColumnIsShifted){
+TEST(PanelDriver, WhenFirstTickIsGeneratedTheFirstColumnIsShifted){
 	NiceMock<MockDataShifter> dataShifter;
-	DisplayDriver displayDriver(dataShifter);
+	PanelDriver panelDriver(dataShifter);
 
 	const uint16_t data0 = 546;
 	const uint16_t data1 = 856;
-	displayDriver.setData(0,0,data0);
-	displayDriver.setData(1,0,data1);
+	panelDriver.setData(0,0,data0);
+	panelDriver.setData(1,0,data1);
 
 	EXPECT_CALL(dataShifter, shiftColumnData(0,data0,data1));
-	displayDriver.tick();
+	panelDriver.tick();
 }
 
-TEST(DisplayDriverTest, AfterFourTicksThe4thColumnIsShifted){
+TEST(PanelDriver, AfterFourTicksThe4thColumnIsShifted){
 	NiceMock<MockDataShifter> dataShifter;
-	DisplayDriver displayDriver(dataShifter);
+	PanelDriver panelDriver(dataShifter);
 
 	const uint16_t data0 = 546;
 	const uint16_t data1 = 856;
 	const uint16_t column = 3;
 
-	displayDriver.setData(0, column, data0);
-	displayDriver.setData(1, column, data1);
-	displayDriver.tick();
-	displayDriver.tick();
-	displayDriver.tick();
+	panelDriver.setData(0, column, data0);
+	panelDriver.setData(1, column, data1);
+	panelDriver.tick();
+	panelDriver.tick();
+	panelDriver.tick();
 
 	EXPECT_CALL(dataShifter, shiftColumnData(column,data0,data1));
-	displayDriver.tick();
+	panelDriver.tick();
 }
 
-TEST(DisplayDriverTest, AfterLastTickTheFirstColumnIsShifted){
+TEST(PanelDriver, AfterLastTickTheFirstColumnIsShifted){
 	NiceMock<MockDataShifter> dataShifter;
-	DisplayDriver displayDriver(dataShifter);
+	PanelDriver panelDriver(dataShifter);
 
 	const uint16_t data0 = 546;
 	const uint16_t data1 = 856;
 	const uint16_t column = 0;
 
-	displayDriver.setData(0, column, data0);
-	displayDriver.setData(1, column, data1);
-	for(int i = 0; i < (DisplayDriver::COLUMNS); i++){
-		displayDriver.tick();
+	panelDriver.setData(0, column, data0);
+	panelDriver.setData(1, column, data1);
+	for(int i = 0; i < (PanelDriver::COLUMNS); i++){
+		panelDriver.tick();
 	}
 
 	EXPECT_CALL(dataShifter, shiftColumnData(column,data0,data1));
-	displayDriver.tick();
+	panelDriver.tick();
 }
