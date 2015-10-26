@@ -6,6 +6,7 @@
 
 class DisplayCharacterMap{
 	public:
+		virtual ~DisplayCharacterMap(){};
 		virtual uint16_t map(char c) = 0;
 };
 

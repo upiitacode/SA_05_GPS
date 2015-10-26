@@ -3,7 +3,7 @@
 PanelDriver::PanelDriver(DataShifter& dataShifter){
 	this->dataShifter = & dataShifter;
 	dataShifter.shiftColumnData(0,0,0);
-	clearAllData();
+	clearAll();
 	currentColumn = 0;
 }
 
@@ -21,7 +21,7 @@ void PanelDriver::tick(void){
 	currentColumn = (currentColumn + 1) % COLUMNS;
 }
 
-void PanelDriver::clearAllData(void){
+void PanelDriver::clearAll(void){
 	for(int i = 0; i < ROWS; i++){
 		for(int j = 0; j < COLUMNS; j++){
 			data[i][j] = 0;
