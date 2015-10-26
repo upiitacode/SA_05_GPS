@@ -2,7 +2,7 @@
 #include "delay.h"
 #include "stm32f30x.h"                  // Device header
 
-#define SHIFT_DELAY 2
+#define SHIFT_DELAY 1
 #define SR_CLK GPIO_Pin_10
 #define SR_DATA GPIO_Pin_14
 #define SR_LOAD GPIO_Pin_15
@@ -41,17 +41,17 @@ void _SerialShifter_Shiftdata(const char * pData, int nBytes){
 		byteData = pData[j];
 		for(int i = 7; i >= 0; i--){
 			_SerialShifter_pinWrite(SR_CLK, 0);
-			delay_ms(SHIFT_DELAY);
+			delay_us(SHIFT_DELAY);
 			_SerialShifter_pinWrite(SR_DATA,((byteData>>i) & 0x1));
-			delay_ms(SHIFT_DELAY);
+			delay_us(SHIFT_DELAY);
 			_SerialShifter_pinWrite(SR_CLK, 1);
-			delay_ms(SHIFT_DELAY);
+			delay_us(SHIFT_DELAY);
 		}
 	}
 	_SerialShifter_pinWrite(SR_LOAD, 0);
-	delay_ms(SHIFT_DELAY);
+	delay_us(SHIFT_DELAY);
 	_SerialShifter_pinWrite(SR_LOAD, 1);
-	delay_ms(SHIFT_DELAY);
+	delay_us(SHIFT_DELAY);
 }
 
 
