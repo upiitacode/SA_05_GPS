@@ -5,6 +5,9 @@
 #include "PanelDriver.h"
 #include "PanelCharacterMap.h"
 #include "PanelSerializer.h"
+#include "timer_15.h"
+#include "Clock.h"
+#include "timedclock.h"
 
 void tarea1(void const * arguments); //tarea 1
 osThreadId  tarea1ID;	//identificador del hilo tarea 1
@@ -21,6 +24,10 @@ PanelDriver* panelDriver;
 
 int main(){
 	//System configuration
+	Time myTime(0,20,50,0);
+	TimedClock clock(myTime);
+	Timer15 timer15(1000, clock);
+
 	Serial_stream* serial = new SerialUSART2(9600);
 	SystemCoreClockUpdate();
 	serial->printf("Starting System\n");
@@ -46,11 +53,11 @@ int main(){
 	serial->printf("done\n");
 	serial->printf("System ready, Runnig at thread \"main\"\n");
 
-	int counter = 0;
 	while(1){
-		panelSerializer.printf("\fReloj\nH %02d",counter);
-		counter++;
-		osDelay(1000);
+		clock.getTime(myTime);
+		panelSerializer.printf("UPIITA");
+		panelSerializer.printf("\n%02d %02d %02d\n", myTime.hours, myTime.minutes, myTime.seconds);
+		osDelay(500);
 	}
 }
 
@@ -83,6 +90,6 @@ void tarea1(void const * arguments){
 
 void tarea2(void const * arguments){
 	while(1){
-		panelDriver->tick();	
+		panelDriver->tick();
 	}
 }
