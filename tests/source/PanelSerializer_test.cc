@@ -5,8 +5,7 @@ using ::testing::ReturnArg;
 using ::testing::Return;
 using ::testing::_;
 
-#include "PanelCharacterMap.h"
-#include "PanelDriver.h"
+#include "PanelSerializer.h"
 
 class MockCharacterMap : public DisplayCharacterMap{
 	public:
@@ -18,41 +17,6 @@ class MockPanelDriver : public PanelDriverInterface{
 		MOCK_METHOD2(getData, uint16_t(int,int));
 		MOCK_METHOD3(setData, void(int,int,uint16_t));
 		MOCK_METHOD0(clearAll, void(void));
-};
-
-class PanelSerializer{
-	private:
-		PanelDriverInterface* panelDriver;
-		DisplayCharacterMap* characterMap;
-		int lastColumn;
-		int lastRow;
-	public:
-		PanelSerializer(PanelDriverInterface& panelDriver, DisplayCharacterMap& characterMap){
-			this->panelDriver = &panelDriver;
-			this->characterMap = &characterMap;
-			this->lastColumn  = 7;
-			this->lastRow  = 0;
-		}
-		virtual char getChar(void){
-			return 0;
-		}
-		virtual void sendChar(char data){
-			if(data == '\f'){
-				panelDriver->clearAll();
-				this->lastColumn = 7;
-				this->lastRow = 0;
-			}else if(data == '\n'){
-				this->lastColumn = 7;
-				this->lastRow = 1;
-			}else{
-				panelDriver->setData(lastRow,lastColumn,characterMap->map(data));
-				this->lastColumn--;
-				if(lastColumn < 0){
-					this->lastColumn = 7;
-					if(lastRow < 1) this->lastRow++;
-				}
-			}
-		}
 };
 
 TEST(PanelSerializerTest, ThatGetCharReturnsZero){
