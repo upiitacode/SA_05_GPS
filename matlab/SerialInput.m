@@ -16,7 +16,7 @@ classdef SerialInput < handle
             fclose(obj.serial_file);
         end
         function [readStr] = readLine(obj) 
-            readStr =fgetl(obj.serial_file);
+            readStr =fgetl(obj.serial_file)
         end
     end
 end
