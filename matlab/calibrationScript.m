@@ -1,5 +1,6 @@
-clear all
-gps = MockGPS();
+%%clear all
+serial  = SerialInput('COM6')
+gps = GPS(serial);
 
 disp('Select 3 points in map')
 yellow = uint8([255 255 0]); % [R G B]; class of yellow must match class of I
@@ -15,15 +16,21 @@ axes(gca);
 imshow(I); 
 [x , y] = getpts(gca);
 P = [x,y]';
-for i = 1:3
-    readString = input('Go to circle, Press any key to continue\n');
-    stablePos = gps.readStableData(10);
-    Q(:,i) = [stablePos.longitude; stablePos.latitude];
-end
+string = {}
+
+% for i = 1:3
+%     disp(i)
+%     readString = input('Go to circle, Press any key to continue\n');
+%     stablePos = gps.readValidData();
+%     stablePos = gps.readValidData();
+%     Q(:r,i) = [stablePos.longitude; stablePos.latitude];
+% end
+
+Q= [q1 q2 q3]
 %%
 [Apq Bpq] = MapTranslator.getMatrix(P,Q)
 [Aqp Bqp] = MapTranslator.getMatrix(Q,P)
 %%
 save('transformMatrix','Apq','Bpq','Aqp','Bqp');
 %% Coordinate to pixel
-
+serial.close()
