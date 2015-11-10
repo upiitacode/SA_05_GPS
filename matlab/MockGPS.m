@@ -1,4 +1,4 @@
-classdef MockMPU < handle
+classdef MockGPS < handle
     %UNTITLED9 Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -7,7 +7,7 @@ classdef MockMPU < handle
     end
     
     methods
-        function obj = MockMPU()
+        function obj = MockGPS()
             obj.lastAngle = 0;
         end
         function close(obj)
