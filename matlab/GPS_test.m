@@ -7,3 +7,8 @@ parsedS =parseToken({});
 assert(isempty(fieldnames(parsedS)));mock =  MockSerialInput();
 gps = GPS(mock);
 gpsStruct = gps.readValidData()
+%% Test 2: 
+parsedS =parseToken({});
+assert(isempty(fieldnames(parsedS)));mock =  MockSerialInput();
+gps = GPS(mock);
+gpsStruct = gps.readStableData(10)
