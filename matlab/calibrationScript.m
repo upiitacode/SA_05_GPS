@@ -23,11 +23,7 @@ end
 %%
 [Apq Bpq] = MapTranslator.getMatrix(P,Q)
 [Aqp Bqp] = MapTranslator.getMatrix(Q,P)
+%%
+save('transformMatrix','Apq','Bpq','Aqp','Bqp');
 %% Coordinate to pixel
-q = [-99.12787310779095,19.512205595703424]'; 
-p =Aqp * q + Bqp; 
-pt = p'
-points = [pt, ones(size(pt,1),1)*10]
-points = int32(points)
-K = step(blueCirclePainter, I, points);
-imshow(K); 
+
