@@ -19,7 +19,7 @@ if(~isempty(fieldnames(gpsStruct)))
             gprmcStruct.('velocity') = 0;
             gprmcStruct.('course') = 0;
         end
-         gprmcStruct.('time') = gpsStruct.time;
+         gprmcStruct.('time') = str2double(gpsStruct.time);
          gprmcStruct.('date') = gpsStruct.date;
     end
 end
