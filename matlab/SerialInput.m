@@ -1,4 +1,4 @@
-classdef SerialMPU < handle
+classdef SerialInput < handle
     %UNTITLED9 Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -7,15 +7,15 @@ classdef SerialMPU < handle
     end
     
     methods
-        function obj =SerialMPU()
-            obj.serial_file = serial('COM4');
+        function obj =SerialInput(comString)
+            obj.serial_file = serial(comString);
             fopen(obj.serial_file);
-            obj.getString();
+            obj.readLine();
         end
         function close(obj)
             fclose(obj.serial_file);
         end
-        function [readStr] = getString(obj) 
+        function [readStr] = readLine(obj) 
             readStr =fgetl(obj.serial_file);
         end
     end
